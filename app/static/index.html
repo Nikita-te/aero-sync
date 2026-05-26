@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AeroSync — Mission-Grade Video Conferencing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="stylesheet" href="/static/css/components.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     LANDING / AUTH PAGE
+════════════════════════════════════════════ -->
+<div id="page-landing" class="page active">
+  <div class="landing-bg">
+    <div class="stars" id="stars"></div>
+    <div class="orbit-ring orbit-1"></div>
+    <div class="orbit-ring orbit-2"></div>
+    <div class="orbit-ring orbit-3"></div>
+  </div>
+
+  <header class="landing-header">
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="18" stroke="#F97316" stroke-width="2"/>
+        <path d="M20 8 L24 20 L20 32 L16 20 Z" fill="#F97316"/>
+        <circle cx="20" cy="20" r="4" fill="#0A0E27" stroke="#F97316" stroke-width="1.5"/>
+        <path d="M8 20 H14 M26 20 H32" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="logo-text">AeroSync</span>
+    </div>
+    <nav class="landing-nav">
+      <button class="btn-ghost" onclick="showAuth('login')">Sign In</button>
+      <button class="btn-primary" onclick="showAuth('register')">Launch Free</button>
+    </nav>
+  </header>
+
+  <main class="landing-hero">
+    <div class="hero-badge">Mission Control for Remote Teams</div>
+    <h1 class="hero-title">
+      Video Conferencing<br/>
+      <span class="gradient-text">Built for Precision</span>
+    </h1>
+    <p class="hero-subtitle">
+      Real-time collaboration with aerospace-grade reliability. Video, whiteboard,
+      screen share, and synchronized presentations — all in one cockpit.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary btn-lg" onclick="showAuth('register')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Start a Meeting
+      </button>
+      <button class="btn-outline btn-lg" onclick="showAuth('login')">
+        Sign In to Dashboard
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">50</span><span class="stat-label">Participants</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">HD</span><span class="stat-label">Video Quality</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Whiteboard</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">E2E</span><span class="stat-label">Encrypted</span></div>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     AUTH MODAL
+════════════════════════════════════════════ -->
+<div id="modal-auth" class="modal-overlay hidden" onclick="closeAuthIfBg(event)">
+  <div class="modal-card auth-card">
+    <button class="modal-close" onclick="closeAuth()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <div class="auth-logo">
+      <svg viewBox="0 0 40 40" fill="none" width="36">
+        <circle cx="20" cy="20" r="18" stroke="#F97316" stroke-width="2"/>
+        <path d="M20 8 L24 20 L20 32 L16 20 Z" fill="#F97316"/>
+        <circle cx="20" cy="20" r="4" fill="#0A0E27" stroke="#F97316" stroke-width="1.5"/>
+      </svg>
+      <span>AeroSync</span>
+    </div>
+
+    <!-- Login Form -->
+    <div id="form-login" class="auth-form">
+      <h2 class="auth-title">Welcome Back</h2>
+      <p class="auth-sub">Sign in to your mission control</p>
+      <div class="form-group">
+        <label class="form-label">Username or Email</label>
+        <input id="login-identifier" type="text" class="form-input" placeholder="pilot@aerosync.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input id="login-password" type="password" class="form-input" placeholder="••••••••" />
+      </div>
+      <div id="login-error" class="form-error hidden"></div>
+      <button class="btn-primary btn-full" onclick="handleLogin()">
+        <span id="login-btn-text">Launch Session</span>
+        <svg id="login-spinner" class="spinner hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      </button>
+      <p class="auth-switch">No account? <button class="link-btn" onclick="switchAuth('register')">Register</button></p>
+    </div>
+
+    <!-- Register Form -->
+    <div id="form-register" class="auth-form hidden">
+      <h2 class="auth-title">Join AeroSync</h2>
+      <p class="auth-sub">Create your mission profile</p>
+      <div class="form-group">
+        <label class="form-label">Display Name</label>
+        <input id="reg-display" type="text" class="form-input" placeholder="Mission Commander" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input id="reg-username" type="text" class="form-input" placeholder="commander42" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input id="reg-email" type="email" class="form-input" placeholder="pilot@aerosync.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password <span class="label-hint">(min 8 chars)</span></label>
+        <input id="reg-password" type="password" class="form-input" placeholder="••••••••" />
+      </div>
+      <div id="register-error" class="form-error hidden"></div>
+      <button class="btn-primary btn-full" onclick="handleRegister()">
+        <span id="reg-btn-text">Create Account</span>
+        <svg id="reg-spinner" class="spinner hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      </button>
+      <p class="auth-switch">Have an account? <button class="link-btn" onclick="switchAuth('login')">Sign In</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     DASHBOARD PAGE
+════════════════════════════════════════════ -->
+<div id="page-dashboard" class="page hidden">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 40 40" fill="none" width="28">
+        <circle cx="20" cy="20" r="18" stroke="#F97316" stroke-width="2"/>
+        <path d="M20 8 L24 20 L20 32 L16 20 Z" fill="#F97316"/>
+        <circle cx="20" cy="20" r="4" fill="#0A0E27" stroke="#F97316" stroke-width="1.5"/>
+      </svg>
+      <span class="logo-text">AeroSync</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" onclick="setDashTab('home')" data-tab="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        Home
+      </button>
+      <button class="nav-item" onclick="setDashTab('rooms')" data-tab="rooms">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        My Rooms
+      </button>
+      <button class="nav-item" onclick="setDashTab('join')" data-tab="join">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Join Room
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar" id="dash-avatar">?</div>
+        <div class="user-info">
+          <span class="user-name" id="dash-username">—</span>
+          <span class="user-role">Pilot</span>
+        </div>
+      </div>
+      <button class="btn-ghost btn-sm" onclick="handleLogout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <!-- HOME TAB -->
+    <section id="tab-home" class="dash-tab">
+      <div class="dash-header">
+        <div>
+          <h1 class="dash-title">Mission Control</h1>
+          <p class="dash-sub">Ready for launch, <span id="dash-greeting">pilot</span>.</p>
+        </div>
+        <button class="btn-primary" onclick="openCreateRoom()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Meeting
+        </button>
+      </div>
+      <div class="quick-actions">
+        <div class="quick-card" onclick="openCreateRoom()">
+          <div class="quick-icon orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </div>
+          <h3>Start Meeting</h3>
+          <p>Launch a new secure meeting room instantly</p>
+        </div>
+        <div class="quick-card" onclick="setDashTab('join')">
+          <div class="quick-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          </div>
+          <h3>Join Meeting</h3>
+          <p>Enter a room ID to join an existing session</p>
+        </div>
+        <div class="quick-card" onclick="setDashTab('rooms')">
+          <div class="quick-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <h3>My Rooms</h3>
+          <p>View and manage your created meeting rooms</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY ROOMS TAB -->
+    <section id="tab-rooms" class="dash-tab hidden">
+      <div class="dash-header">
+        <div>
+          <h1 class="dash-title">My Rooms</h1>
+          <p class="dash-sub">Your created meeting rooms</p>
+        </div>
+        <button class="btn-primary" onclick="openCreateRoom()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Room
+        </button>
+      </div>
+      <div id="rooms-list" class="rooms-grid">
+        <div class="rooms-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+          <p>No rooms yet — create your first meeting!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- JOIN TAB -->
+    <section id="tab-join" class="dash-tab hidden">
+      <div class="dash-header">
+        <div>
+          <h1 class="dash-title">Join a Meeting</h1>
+          <p class="dash-sub">Enter the room ID from your host</p>
+        </div>
+      </div>
+      <div class="join-panel">
+        <div class="form-group">
+          <label class="form-label">Room ID</label>
+          <input id="join-room-id" type="text" class="form-input form-input-lg" placeholder="e.g. aB3xK9mP2qRt" maxlength="20" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Display Name</label>
+          <input id="join-display-name" type="text" class="form-input" placeholder="Mission Specialist" />
+        </div>
+        <div id="join-error" class="form-error hidden"></div>
+        <button class="btn-primary btn-lg" onclick="handleJoin()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Join Meeting
+        </button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     CREATE ROOM MODAL
+════════════════════════════════════════════ -->
+<div id="modal-create-room" class="modal-overlay hidden" onclick="closeCreateRoomIfBg(event)">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeCreateRoom()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h2 class="modal-title">New Meeting Room</h2>
+    <div class="form-group">
+      <label class="form-label">Room Name</label>
+      <input id="create-room-name" type="text" class="form-input" placeholder="Orbital Sync" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Max Participants</label>
+      <input id="create-room-max" type="number" class="form-input" value="50" min="2" max="50" />
+    </div>
+    <div class="form-group">
+      <label class="toggle-label">
+        <input id="create-mute-entry" type="checkbox" class="toggle-input" />
+        <span class="toggle-track"></span>
+        Mute participants on entry
+      </label>
+    </div>
+    <div class="form-group">
+      <label class="toggle-label">
+        <input id="create-video-off" type="checkbox" class="toggle-input" />
+        <span class="toggle-track"></span>
+        Video off on entry
+      </label>
+    </div>
+    <div id="create-error" class="form-error hidden"></div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeCreateRoom()">Cancel</button>
+      <button class="btn-primary" onclick="handleCreateRoom()">Create Room</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MEETING ROOM PAGE
+════════════════════════════════════════════ -->
+<div id="page-meeting" class="page hidden">
+  <!-- Top bar -->
+  <header class="meeting-header">
+    <div class="meeting-logo">
+      <svg viewBox="0 0 40 40" fill="none" width="24">
+        <circle cx="20" cy="20" r="18" stroke="#F97316" stroke-width="2"/>
+        <path d="M20 8 L24 20 L20 32 L16 20 Z" fill="#F97316"/>
+        <circle cx="20" cy="20" r="4" fill="#0A0E27" stroke="#F97316" stroke-width="1.5"/>
+      </svg>
+      <span>AeroSync</span>
+    </div>
+    <div class="meeting-info">
+      <span class="meeting-room-name" id="meeting-room-name">—</span>
+      <span class="meeting-room-id" id="meeting-room-id-display">—</span>
+    </div>
+    <div class="meeting-header-right">
+      <div class="rec-indicator hidden" id="rec-indicator">
+        <span class="rec-dot"></span> REC
+      </div>
+      <div class="participant-count">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <span id="participant-count">1</span>
+      </div>
+      <button class="btn-ghost btn-sm" onclick="copyRoomLink()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copy Link
+      </button>
+    </div>
+  </header>
+
+  <!-- Main meeting area -->
+  <div class="meeting-body" id="meeting-body">
+    <!-- Video area -->
+    <div class="video-area" id="video-area">
+      <!-- View toggle -->
+      <div class="view-toggle">
+        <button class="view-btn active" id="btn-spotlight" onclick="setView('spotlight')">Spotlight</button>
+        <button class="view-btn" id="btn-gallery" onclick="setView('gallery')">Gallery</button>
+      </div>
+
+      <!-- Spotlight mode -->
+      <div id="spotlight-view" class="spotlight-container">
+        <div class="spotlight-main" id="spotlight-main">
+          <video id="spotlight-video" autoplay playsinline></video>
+          <div class="participant-overlay">
+            <span class="participant-name" id="spotlight-name">You</span>
+            <span class="participant-audio-icon" id="spotlight-audio">🎤</span>
+          </div>
+          <div class="screen-share-badge hidden" id="screen-share-badge">🖥️ Screen Share</div>
+        </div>
+        <div class="thumbnail-strip" id="thumbnail-strip">
+          <!-- Thumbnails injected by JS -->
+        </div>
+      </div>
+
+      <!-- Gallery mode -->
+      <div id="gallery-view" class="gallery-grid hidden" id="gallery-grid">
+        <!-- Video tiles injected by JS -->
+      </div>
+
+      <!-- No video placeholder -->
+      <div class="no-video-msg hidden" id="no-video-msg">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        <p>Camera is off</p>
+      </div>
+    </div>
+
+    <!-- Whiteboard panel (hidden by default) -->
+    <div class="whiteboard-panel hidden" id="whiteboard-panel">
+      <div class="wb-toolbar" id="wb-toolbar">
+        <button class="wb-tool active" data-tool="pen" onclick="setWbTool('pen')" title="Pen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+        <button class="wb-tool" data-tool="marker" onclick="setWbTool('marker')" title="Marker">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="8" rx="4"/><path d="M21 12h.01"/></svg>
+        </button>
+        <button class="wb-tool" data-tool="eraser" onclick="setWbTool('eraser')" title="Eraser">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7L3 16l9.5-9.5 7 7z"/><path d="M6.5 17.5l4-4"/></svg>
+        </button>
+        <div class="wb-divider"></div>
+        <div class="wb-colors" id="wb-colors">
+          <button class="wb-color active" data-color="#FFFFFF" style="background:#FFFFFF" onclick="setWbColor('#FFFFFF')"></button>
+          <button class="wb-color" data-color="#F97316" style="background:#F97316" onclick="setWbColor('#F97316')"></button>
+          <button class="wb-color" data-color="#3B82F6" style="background:#3B82F6" onclick="setWbColor('#3B82F6')"></button>
+          <button class="wb-color" data-color="#10B981" style="background:#10B981" onclick="setWbColor('#10B981')"></button>
+          <button class="wb-color" data-color="#EF4444" style="background:#EF4444" onclick="setWbColor('#EF4444')"></button>
+          <button class="wb-color" data-color="#8B5CF6" style="background:#8B5CF6" onclick="setWbColor('#8B5CF6')"></button>
+          <button class="wb-color" data-color="#F59E0B" style="background:#F59E0B" onclick="setWbColor('#F59E0B')"></button>
+          <button class="wb-color" data-color="#000000" style="background:#000000; border:1px solid #444" onclick="setWbColor('#000000')"></button>
+        </div>
+        <div class="wb-divider"></div>
+        <select class="wb-size-select" onchange="setWbSize(this.value)">
+          <option value="2">Fine</option>
+          <option value="4" selected>Medium</option>
+          <option value="8">Thick</option>
+          <option value="16">Marker</option>
+        </select>
+        <div class="wb-divider"></div>
+        <button class="wb-tool" onclick="undoWb()" title="Undo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 00-4-4H4"/></svg>
+        </button>
+        <button class="wb-tool" onclick="clearWb()" title="Clear All">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+        </button>
+      </div>
+      <canvas id="whiteboard-canvas" class="whiteboard-canvas"></canvas>
+    </div>
+
+    <!-- Presentation panel -->
+    <div class="presentation-panel hidden" id="presentation-panel">
+      <div class="presentation-controls" id="presentation-controls">
+        <button class="btn-ghost btn-sm" onclick="changeSlide(-1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          Prev
+        </button>
+        <span class="slide-counter" id="slide-counter">Slide 1 / 1</span>
+        <button class="btn-ghost btn-sm" onclick="changeSlide(1)">
+          Next
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <!-- Zoom controls (presenter only) -->
+        <div class="zoom-controls" id="zoom-controls">
+          <button class="btn-ghost btn-sm zoom-btn" onclick="zoomPDF(-0.25)" title="Zoom Out">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          </button>
+          <span id="zoom-label" class="zoom-label">100%</span>
+          <button class="btn-ghost btn-sm zoom-btn" onclick="zoomPDF(0.25)" title="Zoom In">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          </button>
+          <button class="btn-ghost btn-sm zoom-btn" onclick="zoomFitPDF()" title="Fit to screen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+            Fit
+          </button>
+        </div>
+        <button class="btn-danger btn-sm" onclick="endPresentation()">End Presentation</button>
+      </div>
+      <div class="presentation-viewer" id="presentation-viewer">
+        <canvas id="pdf-canvas"></canvas>
+        <p class="pres-hint" id="pres-hint">Upload a PDF to start presenting</p>
+        <input type="file" id="pdf-upload" accept=".pdf" class="hidden" onchange="loadPDF(event)" />
+        <button class="btn-primary" id="pres-upload-btn" onclick="document.getElementById('pdf-upload').click()">
+          Upload PDF
+        </button>
+      </div>
+      <div class="presentation-participants" id="presentation-participants">
+        <!-- Participant thumbnails shown beside presentation -->
+      </div>
+    </div>
+
+    <!-- Chat sidebar -->
+    <aside class="chat-sidebar hidden" id="chat-sidebar">
+      <div class="chat-header">
+        <span>💬 Chat</span>
+        <button class="icon-btn" onclick="toggleChat()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-welcome">
+          <p>🛰️ Secure channel established. Say hello!</p>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <div class="typing-indicator hidden" id="typing-indicator"></div>
+        <div class="chat-input-row">
+          <input id="chat-input" type="text" class="chat-input" placeholder="Message…" maxlength="500"
+            onkeydown="handleChatKey(event)" oninput="handleTyping()" />
+          <button class="send-btn" onclick="sendMessage()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+        <div class="reactions-bar">
+          <button onclick="sendReaction('👍')">👍</button>
+          <button onclick="sendReaction('👏')">👏</button>
+          <button onclick="sendReaction('🚀')">🚀</button>
+          <button onclick="sendReaction('❓')">❓</button>
+          <button onclick="sendReaction('⚡')">⚡</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Participants sidebar -->
+    <aside class="participants-sidebar hidden" id="participants-sidebar">
+      <div class="chat-header">
+        <span>👥 Participants</span>
+        <button class="icon-btn" onclick="toggleParticipants()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div id="participants-list" class="participants-list">
+        <!-- Populated by JS -->
+      </div>
+    </aside>
+  </div>
+
+  <!-- Control Deck -->
+  <footer class="control-deck" id="control-deck">
+    <div class="controls-left">
+      <div class="control-group">
+        <button class="ctrl-btn active" id="btn-mic" onclick="toggleMic()" title="Toggle Microphone">
+          <svg id="icon-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          <svg id="icon-mic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 005.12 2.12M15 9.34V4a3 3 0 00-5.94-.6"/><path d="M17 16.95A7 7 0 015 12v-2m14 0v2a7 7 0 01-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+        <span class="ctrl-label">Mic</span>
+      </div>
+      <div class="control-group">
+        <button class="ctrl-btn active" id="btn-camera" onclick="toggleCamera()" title="Toggle Camera">
+          <svg id="icon-cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          <svg id="icon-cam-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden"><line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m3-3h6l2 3h4a2 2 0 012 2v9.34m-7.72-2.06A4 4 0 018.56 8.56"/></svg>
+        </button>
+        <span class="ctrl-label">Camera</span>
+      </div>
+      <div class="control-group">
+        <button class="ctrl-btn" id="btn-screen" onclick="toggleScreenShare()" title="Screen Share">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </button>
+        <span class="ctrl-label">Share</span>
+      </div>
+    </div>
+
+    <div class="controls-center">
+      <div class="control-group">
+        <button class="ctrl-btn" id="btn-whiteboard" onclick="toggleWhiteboard()" title="Whiteboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="13" rx="1"/><path d="M8 21h8m-4-5v5"/><path d="M7 8l3 3 4-4"/></svg>
+        </button>
+        <span class="ctrl-label">Board</span>
+      </div>
+      <div class="control-group">
+        <button class="ctrl-btn" id="btn-present" onclick="togglePresentation()" title="Present Document">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        </button>
+        <span class="ctrl-label">Present</span>
+      </div>
+      <div class="control-group">
+        <button class="ctrl-btn" id="btn-chat" onclick="toggleChat()" title="Chat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <span class="chat-badge hidden" id="chat-badge">0</span>
+        </button>
+        <span class="ctrl-label">Chat</span>
+      </div>
+      <div class="control-group">
+        <button class="ctrl-btn" id="btn-participants" onclick="toggleParticipants()" title="Participants">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </button>
+        <span class="ctrl-label">People</span>
+      </div>
+    </div>
+
+    <div class="controls-right">
+      <button class="btn-danger leave-btn" onclick="leaveMeeting()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Leave
+      </button>
+    </div>
+  </footer>
+
+  <!-- Floating reaction overlay -->
+  <div class="reaction-overlay" id="reaction-overlay"></div>
+
+  <!-- Toast notifications -->
+  <div class="toast-container" id="toast-container"></div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  // Set PDF.js worker
+  if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+</script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>

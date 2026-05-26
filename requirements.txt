@@ -1,0 +1,13 @@
+Flask==3.0.0
+Flask-SocketIO==5.3.5
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.3
+Flask-CORS==4.0.0
+Flask-Bcrypt==1.0.1
+python-socketio==5.10.0
+eventlet==0.33.3
+PyJWT==2.8.0
+python-dotenv==1.0.0
+psycopg2-binary==2.9.9
+redis==5.0.1
+python-slugify==8.0.1
